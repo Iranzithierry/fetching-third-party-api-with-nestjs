@@ -1,19 +1,21 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import axios from 'axios';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { ApiBody, ApiQuery } from '@nestjs/swagger';
+import { Product } from 'src/interfaces/product';
 
 @Controller('products')
 export class ProductsController {
     constructor(private productService: ProductsService) { }
     /**
      * 
-     * @returns {Promise<any>}
-     */
+     * @param searchQuery
+     * @returns 
+    */
     @Get('/')
-    async getProducts(): Promise<any> {
-        return this.productService.getProducts();
+    @ApiQuery({ name: 'search', required: false })
+    async getProducts(@Query('search') searchQuery?: string): Promise<any> {
+        return this.productService.getProducts(searchQuery);
     }
-    
     /**
      * 
      * @param id 
@@ -22,5 +24,14 @@ export class ProductsController {
     @Get('/:id')
     async getProductById(@Param('id') id: string): Promise<any> {
         return this.productService.getProductById(id);
+    }
+    /**
+     * 
+     * @param body 
+     * @returns 
+     */
+    @Post('/')
+    async createProduct(@Body() body: Product): Promise<any> {
+        return this.productService.createProduct(body);
     }
 }
